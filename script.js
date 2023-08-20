@@ -7,6 +7,7 @@ SETTING = null;
 START_SQUARE = null;
 END_SQUARE = null;
 WALL_SQUARES = {};
+NEIGHBORS = {};
 START_BUTTON = document.getElementById("start");
 END_BUTTON = document.getElementById("end");
 WALL_BUTTON = document.getElementById("wall");
@@ -127,3 +128,46 @@ window.onmousedown = (event) => {
   event.preventDefault();
 };
 MakeGrid(ROWS, COLS);
+
+function GetNeighbors(cellId) {
+  coords = cellId.split("-");
+  row = parseInt(coords[0]);
+  col = parseInt(coords[1]);
+
+  neighbors = [];
+  if (row > 0) {
+    neighborId = toString(row - 1) + "-" + toString(col);
+    if (WALL_SQUARES[neighborId] != "wall") {
+      neighbors.add(neighborId);
+    }
+  }
+  if (row < ROWS - 1) {
+    neighborId = toString(row + 1) + "-" + toString(col);
+    if (WALL_SQUARES[neighborId] != "wall") {
+      neighbors.add(neighborId);
+    }
+  }
+  if (col > 0) {
+    neighborId = toString(row) + "-" + toString(col - 1);
+    if (WALL_SQUARES[neighborId] != "wall") {
+      neighbors.add(neighborId);
+    }
+  }
+  if (col < COLS - 1) {
+    neighborId = toString(row) + "-" + toString(col + 1);
+    if (WALL_SQUARES[neighborId] != "wall") {
+      neighbors.add(neighborId);
+    }
+  }
+
+  NEIGHBORS[cellId] = neighbors;
+}
+
+function GetAllNeighors() {
+  WALL_SQUARES.forEach((key, val) => {
+    if (val != "wall" && val != "end") {
+      GetNeighbors(key);
+    }
+  });
+}
+
