@@ -1,17 +1,17 @@
-GRAPH = document.getElementById("graph");
-ROWS = 12;
-COLS = 18;
-HEIGHT = GRAPH.clientHeight / ROWS;
-WIDTH = GRAPH.clientWidth / COLS;
-SETTING = null;
-START_SQUARE = null;
-END_SQUARE = null;
-WALL_SQUARES = {};
-NEIGHBORS = {};
-START_BUTTON = document.getElementById("start");
-END_BUTTON = document.getElementById("end");
-WALL_BUTTON = document.getElementById("wall");
-DONE_BUTTON = document.getElementById("done");
+const GRAPH = document.getElementById("graph");
+const ROWS = 12;
+const COLS = 18;
+const HEIGHT = GRAPH.clientHeight / ROWS;
+const WIDTH = GRAPH.clientWidth / COLS;
+let SETTING = null;
+let START_SQUARE = null;
+let END_SQUARE = null;
+let WALL_SQUARES = {};
+let NEIGHBORS = {};
+const START_BUTTON = document.getElementById("start");
+const END_BUTTON = document.getElementById("end");
+const WALL_BUTTON = document.getElementById("wall");
+const DONE_BUTTON = document.getElementById("done");
 
 function MakeGrid(rows, cols) {
   for (let r = 0; r < rows; r++) {
@@ -38,6 +38,8 @@ function MakeGrid(rows, cols) {
 
 function ResetGrid() {
   DoneWithSettings();
+  START_SQUARE = null;
+  END_SQUARE = null;
   GRAPH.innerHTML = "";
   MakeGrid(ROWS, COLS);
 }
@@ -130,33 +132,34 @@ window.onmousedown = (event) => {
 MakeGrid(ROWS, COLS);
 
 function GetNeighbors(cellId) {
-  coords = cellId.split("-");
-  row = parseInt(coords[0]);
-  col = parseInt(coords[1]);
+  let coords = cellId.split("-");
+  let row = parseInt(coords[0]);
+  let col = parseInt(coords[1]);
 
-  neighbors = [];
+  let neighbors = [];
+  let neighborId = "";
   if (row > 0) {
-    neighborId = toString(row - 1) + "-" + toString(col);
+    neighborId = (row - 1).toString() + "-" + col.toString();
     if (WALL_SQUARES[neighborId] != "wall") {
-      neighbors.add(neighborId);
+      neighbors.push(neighborId);
     }
   }
   if (row < ROWS - 1) {
-    neighborId = toString(row + 1) + "-" + toString(col);
+    neighborId = (row + 1).toString() + "-" + col.toString();
     if (WALL_SQUARES[neighborId] != "wall") {
-      neighbors.add(neighborId);
+      neighbors.push(neighborId);
     }
   }
   if (col > 0) {
-    neighborId = toString(row) + "-" + toString(col - 1);
+    neighborId = row.toString() + "-" + (col - 1).toString();
     if (WALL_SQUARES[neighborId] != "wall") {
-      neighbors.add(neighborId);
+      neighbors.push(neighborId);
     }
   }
   if (col < COLS - 1) {
-    neighborId = toString(row) + "-" + toString(col + 1);
+    neighborId = row.toString() + "-" + (col + 1).toString();
     if (WALL_SQUARES[neighborId] != "wall") {
-      neighbors.add(neighborId);
+      neighbors.push(neighborId);
     }
   }
 
@@ -164,10 +167,49 @@ function GetNeighbors(cellId) {
 }
 
 function GetAllNeighors() {
-  WALL_SQUARES.forEach((key, val) => {
+  Object.keys(WALL_SQUARES).forEach((key) => {
+    let val = WALL_SQUARES[key];
     if (val != "wall" && val != "end") {
       GetNeighbors(key);
     }
   });
 }
 
+function StartSearch() {
+  DoneWithSettings();
+
+  if (START_SQUARE === null || END_SQUARE === null) {
+    alert("You must have a start and an end!");
+    return;
+  }
+
+  GetAllNeighors();
+
+  RunDijkstra();
+}
+
+function RunDijkstra() {
+  let queue = [];
+  let prev = {};
+  let distances = {};
+
+  queue.push(START_SQUARE);
+  distances[START_SQUARE] = 0;
+
+  while (queue.length != 0) {
+    let currnode = queue.shift();
+    if (currnode === END_SQUARE) {
+      break;
+    }
+    NEIGHBORS[currnode].forEach((neighbor) => {
+      let dist = distances[currnode] + 1;
+      if (!(neighbor in prev) || dist < distances[neighbor]) {
+        distances[neighbor] = dist;
+        prev[neighbor] = currnode;
+        queue.push(neighbor);
+      }
+    });
+  }
+
+  let path = [];
+}
