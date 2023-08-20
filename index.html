@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Path Finding Algorithms</title>
+  </head>
+  <body>
+      <div id="settings">
+        <label>Set Attribute:</label>
+        <button id="start" onclick="ChangeSetting('start')">Start</button>
+        <button id="end" onclick="ChangeSetting('end')">End</button>
+        <button id="wall" onclick="ChangeSetting('wall')">Wall</button>
+        <button id="done" onclick="DoneWithSettings()">Done</button>
+        <button id="resetgrid" onclick="ResetGrid()">Reset Grid</button>
+      </div>
+    <div id="main">
+      <div id="graph"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
