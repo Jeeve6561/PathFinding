@@ -6,6 +6,7 @@ WIDTH = GRAPH.clientWidth / COLS;
 SETTING = null;
 START_SQUARE = null;
 END_SQUARE = null;
+WALL_SQUARES = {};
 START_BUTTON = document.getElementById("start");
 END_BUTTON = document.getElementById("end");
 WALL_BUTTON = document.getElementById("wall");
@@ -26,6 +27,7 @@ function MakeGrid(rows, cols) {
       cell.onmouseover = (event) => {
         SetCellDrag(event);
       };
+      WALL_SQUARES[cell.id] = "clear";
       gridRow.appendChild(cell);
     }
     gridRow.classList.add("row");
@@ -76,19 +78,23 @@ function SetCellClick(cell) {
       oldStart = document.getElementById(START_SQUARE);
       oldStart.classList = [];
       oldStart.classList.add("square");
+      WALL_SQUARES[START_SQUARE] = "clear";
     }
     START_SQUARE = cell.id;
     cell.classList = [];
     cell.classList.add("startsquare");
+    WALL_SQUARES[cell.id] = "start";
   } else if (SETTING === "end") {
     if (END_SQUARE != null) {
       oldEnd = document.getElementById(END_SQUARE);
       oldEnd.classList = [];
       oldEnd.classList.add("square");
+      WALL_SQUARES[END_SQUARE] = "clear";
     }
     END_SQUARE = cell.id;
     cell.classList = [];
     cell.classList.add("endsquare");
+    WALL_SQUARES[cell.id] = "end";
   } else if (
     SETTING === "wall" &&
     cell.id != START_SQUARE &&
@@ -96,6 +102,7 @@ function SetCellClick(cell) {
   ) {
     cell.classList = [];
     cell.classList.add("wallsquare");
+    WALL_SQUARES[cell.id] = "wall";
   }
 }
 
@@ -109,7 +116,7 @@ function SetCellDrag(event) {
     cell = event.target;
     cell.classList.remove("square");
     cell.classList.add("wallsquare");
-    console.log(event.buttons);
+    WALL_SQUARES[cell.id] = "wall";
   }
 }
 
