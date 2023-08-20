@@ -1,6 +1,6 @@
 GRAPH = document.getElementById("graph");
-ROWS = 40;
-COLS = 60;
+ROWS = 12;
+COLS = 18;
 HEIGHT = GRAPH.clientHeight / ROWS;
 WIDTH = GRAPH.clientWidth / COLS;
 SETTING = null;
