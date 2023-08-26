@@ -1,6 +1,6 @@
 const GRAPH = document.getElementById("graph");
-const ROWS = 12;
-const COLS = 18;
+const ROWS = 20;
+const COLS = 30;
 const HEIGHT = GRAPH.clientHeight / ROWS;
 const WIDTH = GRAPH.clientWidth / COLS;
 let SETTING = null;
@@ -12,6 +12,7 @@ const START_BUTTON = document.getElementById("start");
 const END_BUTTON = document.getElementById("end");
 const WALL_BUTTON = document.getElementById("wall");
 const DONE_BUTTON = document.getElementById("done");
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 function MakeGrid(rows, cols) {
   for (let r = 0; r < rows; r++) {
@@ -188,7 +189,7 @@ function StartSearch() {
   RunDijkstra();
 }
 
-function RunDijkstra() {
+async function RunDijkstra() {
   let queue = [];
   let prev = {};
   let distances = {};
@@ -196,7 +197,10 @@ function RunDijkstra() {
   queue.push(START_SQUARE);
   distances[START_SQUARE] = 0;
 
+  let sleep_time = 5000 / (ROWS * COLS);
+
   while (queue.length != 0) {
+    await sleep(sleep_time);
     let currnode = queue.shift();
     if (currnode === END_SQUARE) {
       break;
@@ -207,9 +211,35 @@ function RunDijkstra() {
         distances[neighbor] = dist;
         prev[neighbor] = currnode;
         queue.push(neighbor);
+        if (neighbor !== START_SQUARE) {
+          document.getElementById(neighbor).classList.add("searchingsquare");
+        }
+        if (currnode !== START_SQUARE) {
+          document.getElementById(currnode).classList.add("searchedsquare");
+        }
       }
     });
   }
+  document.getElementById(START_SQUARE).classList = [];
+  document.getElementById(START_SQUARE).classList.add("startsquare");
+  document.getElementById(END_SQUARE).classList = [];
+  document.getElementById(END_SQUARE).classList.add("endsquare");
+
+  if (!(END_SQUARE in prev)) {
+    alert("There is no path!");
+  }
 
   let path = [];
+  let prevnode = END_SQUARE;
+  while (prevnode !== START_SQUARE) {
+    path.push(prevnode);
+    prevnode = prev[prevnode];
+  }
+
+  path.forEach((node) => {
+    if (node !== END_SQUARE && node !== START_SQUARE) {
+      document.getElementById(node).classList = [];
+      document.getElementById(node).classList.add("pathsquare");
+    }
+  });
 }
